@@ -77,6 +77,8 @@ type Header struct {
 	Links    int       // number of inbound links
 	ModTime  time.Time // modified time
 	Size     int64     // size in bytes
+	DevMajor int       // device major
+	DevMinor int       // device minor
 	Name     string    // filename
 	Linkname string    // target name of link
 	Checksum Checksum  // computed checksum

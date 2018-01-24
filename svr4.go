@@ -87,6 +87,10 @@ func readSVR4Header(r io.Reader) (*Header, error) {
 		}
 	}
 
+	if hdr.Mode&ModeDevice != 0 {
+		hdr.DevMajor = int(readHex(asc[78:86]))
+		hdr.DevMinor = int(readHex(asc[86:92]))
+	}
 	// read link name
 	if hdr.Mode&^ModePerm == ModeSymlink {
 		if hdr.Size < 1 || hdr.Size > svr4MaxNameSize {
@@ -118,6 +122,10 @@ func writeSVR4Header(w io.Writer, hdr *Header) (pad int64, err error) {
 		writeHex(hdrBuf[46:54], hdr.ModTime.Unix())
 	}
 	writeHex(hdrBuf[54:62], hdr.Size)
+	if hdr.Mode&ModeDevice != 0 {
+		writeHex(hdrBuf[78:86], int64(hdr.DevMajor))
+		writeHex(hdrBuf[86:94], int64(hdr.DevMinor))
+	}
 	writeHex(hdrBuf[94:102], int64(len(hdr.Name)+1))
 
 	// write header
